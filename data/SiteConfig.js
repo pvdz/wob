@@ -4,7 +4,7 @@ const config = {
   siteTitleAlt: 'Works or B0rks?', // Alternative site title for SEO.
   siteLogo: '/logos/logo-1024.png', // Logo used for SEO and manifest.
   siteUrl: 'https://wob.wob.wob', // Domain of your website without pathPrefix.
-  pathPrefix: 'public', // Prefixes all links. For cases when deployed to example.github.io/gatsby-advanced-starter/.
+  pathPrefix: '', // Prefixes all links. For cases when deployed to example.github.io/gatsby-advanced-starter/.
   copyright: 'Copyright © 2020. All rights reserved.', // Copyright string for the footer of the website and RSS feed.
 }
 
