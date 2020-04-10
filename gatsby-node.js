@@ -14,28 +14,20 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
       Object.prototype.hasOwnProperty.call(node.frontmatter, "title")
     ) {
       slug = `/${_.kebabCase(node.frontmatter.title)}`;
-    } else if (parsedFilePath.name !== "index" && parsedFilePath.dir !== "") {
-      slug = `/${parsedFilePath.dir}/${parsedFilePath.name}/`;
-    } else if (parsedFilePath.dir === "") {
-      slug = `/${parsedFilePath.name}/`;
     } else {
-      slug = `/${parsedFilePath.dir}/`;
+      throw new Error('Missing title in blog post? [' + parsedFilePath.name +']')
+      if (parsedFilePath.name !== "index" && parsedFilePath.dir !== "") {
+        slug = `/${parsedFilePath.dir}/${parsedFilePath.name}/`;
+      } else if (parsedFilePath.dir === "") {
+        slug = `/${parsedFilePath.name}/`;
+      } else {
+        slug = `/${parsedFilePath.dir}/`;
+      }
     }
 
     if (Object.prototype.hasOwnProperty.call(node, "frontmatter")) {
       if (Object.prototype.hasOwnProperty.call(node.frontmatter, "slug"))
         slug = `/${_.kebabCase(node.frontmatter.slug)}`;
-      if (Object.prototype.hasOwnProperty.call(node.frontmatter, "date")) {
-        const date = moment(node.frontmatter.date, siteConfig.dateFromFormat);
-        if (!date.isValid)
-          console.warn(`WARNING: Invalid date.`, node.frontmatter);
-
-        createNodeField({
-          node,
-          name: "date",
-          value: date.toISOString()
-        });
-      }
     }
     createNodeField({ node, name: "slug", value: slug });
   }
@@ -60,7 +52,6 @@ exports.createPages = async ({ graphql, actions }) => {
                 title
                 tags
                 categories
-                date
               }
             }
           }
@@ -77,73 +68,56 @@ exports.createPages = async ({ graphql, actions }) => {
   const tagSet = new Set();
   const categorySet = new Set();
 
-  const postsEdges = markdownQueryResult.data.allMarkdownRemark.edges;
-
-  postsEdges.sort((postA, postB) => {
-    const dateA = moment(
-      postA.node.frontmatter.date,
-      siteConfig.dateFromFormat
-    );
-
-    const dateB = moment(
-      postB.node.frontmatter.date,
-      siteConfig.dateFromFormat
-    );
-
-    if (dateA.isBefore(dateB)) return 1;
-    if (dateB.isBefore(dateA)) return -1;
-
-    return 0;
-  });
-
-  postsEdges.forEach((edge, index) => {
-    if (edge.node.frontmatter.tags) {
-      edge.node.frontmatter.tags.forEach(tag => {
-        tagSet.add(tag);
-      });
-    }
-
-    if (edge.node.frontmatter.categories) {
-      edge.node.frontmatter.categories.forEach(category => {
-        categorySet.add(category)
-      })
-    }
-
-    const nextID = index + 1 < postsEdges.length ? index + 1 : 0;
-    const prevID = index - 1 >= 0 ? index - 1 : postsEdges.length - 1;
-    const nextEdge = postsEdges[nextID];
-    const prevEdge = postsEdges[prevID];
-
-    createPage({
-      path: edge.node.fields.slug,
-      component: postPage,
-      context: {
-        slug: edge.node.fields.slug,
-        nexttitle: nextEdge.node.frontmatter.title,
-        nextslug: nextEdge.node.fields.slug,
-        prevtitle: prevEdge.node.frontmatter.title,
-        prevslug: prevEdge.node.fields.slug
-      }
-    });
-  });
- // Generate link foreach tag page
-  tagSet.forEach(tag => {
-    createPage({
-      path: `/tags/${_.kebabCase(tag)}/`,
-      component: tagPage,
-      context: {
-        tag
-      }
-    });
-  });
-  // Generate link foreach category page
-  categorySet.forEach(category => {
-    createPage({
-      path: `/${_.kebabCase(category)}/`,
-      component: categoryPage,
-      context: {
-        category
-      }
-    });
-  });
+ //  const postsEdges = markdownQueryResult.data.allMarkdownRemark.edges;
+ //
+ //  postsEdges.forEach((edge, index) => {
+ //    if (edge.node.frontmatter.tags) {
+ //      edge.node.frontmatter.tags.forEach(tag => {
+ //        tagSet.add(tag);
+ //      });
+ //    }
+ //
+ //    if (edge.node.frontmatter.categories) {
+ //      edge.node.frontmatter.categories.forEach(category => {
+ //        categorySet.add(category)
+ //      })
+ //    }
+ //
+ //    const nextID = index + 1 < postsEdges.length ? index + 1 : 0;
+ //    const prevID = index - 1 >= 0 ? index - 1 : postsEdges.length - 1;
+ //    const nextEdge = postsEdges[nextID];
+ //    const prevEdge = postsEdges[prevID];
+ //
+ //    createPage({
+ //      path: edge.node.fields.slug,
+ //      component: postPage,
+ //      context: {
+ //        slug: edge.node.fields.slug,
+ //        nexttitle: nextEdge.node.frontmatter.title,
+ //        nextslug: nextEdge.node.fields.slug,
+ //        prevtitle: prevEdge.node.frontmatter.title,
+ //        prevslug: prevEdge.node.fields.slug
+ //      }
+ //    });
+ //  });
+ // // Generate link foreach tag page
+ //  tagSet.forEach(tag => {
+ //    createPage({
+ //      path: `/tags/${_.kebabCase(tag)}/`,
+ //      component: tagPage,
+ //      context: {
+ //        tag
+ //      }
+ //    });
+ //  });
+ //  // Generate link foreach category page
+ //  categorySet.forEach(category => {
+ //    createPage({
+ //      path: `/${_.kebabCase(category)}/`,
+ //      component: categoryPage,
+ //      context: {
+ //        category
+ //      }
+ //    });
+ //  });
 };

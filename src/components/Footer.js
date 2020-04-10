@@ -7,25 +7,18 @@ const Footer = () => (
     <div className={styles.container}>
       <div>
         <a
-          href={`https://twitter.com/${config.userTwitter}`}
+          href={`https://twitter.com/kuvos`}
           target="_blank"
           rel="noopener noreferrer"
         >
           Twitter
         </a>
         <a
-          href={`https://github.com/${config.userGitHub}`}
+          href={`https://github.com/pvdz`}
           target="_blank"
           rel="noopener noreferrer"
         >
           GitHub
-        </a>
-        <a
-          href={config.siteUrl + config.siteRss}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          RSS
         </a>
       </div>
       <div className={styles.copyright}>{config.copyright}</div>

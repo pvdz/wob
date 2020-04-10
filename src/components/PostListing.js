@@ -30,8 +30,7 @@ const PostListing = ({ postEdges }) => {
             <div className={styles.right}>
               <h3>{post.title}</h3>
               <div className={styles.meta}>
-                {post.date} &mdash; <span>{post.categories.join(' / ')}</span>{' '}
-                &mdash; {post.timeToRead} Min Read{' '}
+                {post.date} &mdash; <span>{post.categories.join(' / ')}</span>
               </div>
               <p>{post.excerpt}</p>
             </div>
